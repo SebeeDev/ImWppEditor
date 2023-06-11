@@ -74,6 +74,45 @@ function addNewValuesFieldsIfNoEmpty() {
 }
 
 /**
+ * Remove Key Fields is there are more than one empty
+ */
+function removeKeyFieldsIfEmpty() {
+    let keys = document.querySelectorAll(".wpp-keys > div");
+
+    let emptyKeys = [];
+    let numberOfEmptyKeys = 0;
+
+    // Get empty keys
+    for (const key of keys) {
+        let inputs = key.querySelectorAll(".wpp-values input");
+
+        // Delete if key is empty and all values are empty
+        let shouldBeDeleted = true;
+
+        if (key.querySelector(".wpp-key").value != "") {
+            shouldBeDeleted = false;
+        }
+
+        for (const input of inputs) {
+            if (input.value != "") {
+                shouldBeDeleted = false;
+                break;
+            }
+        }
+        if (shouldBeDeleted == true) {
+            emptyKeys.push(key);
+            numberOfEmptyKeys += 1;
+        }
+    }
+
+    if (numberOfEmptyKeys >= 2) {
+        for (let i = 0; i < emptyKeys.length - 1; i++) {
+            emptyKeys[i].remove();
+        }
+    }
+}
+
+/**
  * Remove Value Fields is there are more than one
  */
 function removeValueFieldsIfEmpty() {
@@ -106,6 +145,8 @@ function refreshElements() {
     addNewValuesFieldsIfNoEmpty();
 
     removeValueFieldsIfEmpty();
+
+    removeKeyFieldsIfEmpty();
 
     updateEvents();
 }
