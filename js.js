@@ -31,7 +31,7 @@ function addNewKey(withFirstValue = true) {
 function updateEvents() {
     let inputs = document.querySelectorAll(".wpp-value, .wpp-key");
     for (const input of inputs) {
-        input.addEventListener("keyup", handleAdditionalInputs);
+        input.addEventListener("keyup", refreshElements);
     }
 }
 
@@ -100,7 +100,7 @@ function removeValueFieldsIfEmpty() {
 /**
  * Handle all additional inputs
  */
-function handleAdditionalInputs() {
+function refreshElements() {
     addNewKeyIfNoEmpty();
 
     addNewValuesFieldsIfNoEmpty();
@@ -120,9 +120,6 @@ function addNewValue(keyElement) {
     keyElement.querySelector(".wpp-values").appendChild(div);
     return div;
 }
-
-addNewKey();
-handleAdditionalInputs();
 
 /**
  *
@@ -240,7 +237,9 @@ function parseWpp() {
         console.error("Missing data");
     }
 
+    // Clear all existing keys
     document.querySelector(".wpp-keys").innerHTML = "";
+
     for (const pair of data) {
         let attr = addNewKey(false);
         attr.querySelector(".wpp-key").value = pair.key;
@@ -250,8 +249,14 @@ function parseWpp() {
         }
     }
 
-    handleAdditionalInputs();
+    refreshElements();
 }
 
+// Add event listeners
 document.querySelector("#wpp-generate").addEventListener("click", generateWpp);
 document.querySelector("#wpp-parse").addEventListener("click", parseWpp);
+
+// Add new empty key with empty values at the beginning
+addNewKey();
+// Make sure all elements are up to date
+refreshElements();
