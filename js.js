@@ -1,3 +1,33 @@
+/**
+ * @param {boolean} withFirstValue
+ * @returns {HTMLDivElement} Added key element
+ */
+function addNewKey(withFirstValue = true) {
+    let div = document.createElement("div");
+    // let randomHash = generateRandomHash();
+    div.innerHTML = `                <div class="form-floating mb-3">
+    <input type="text" class="form-control wpp-key">
+    <label>Key</label>
+</div>
+<div class="row wpp-values">
+    <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control wpp-value">
+            <label>Value</label>
+        </div>
+    </div>
+</div>
+<hr>`;
+    if (!withFirstValue) {
+        div.querySelector(".wpp-values").innerHTML = "";
+    }
+    document.querySelector(".wpp-keys").appendChild(div);
+    return div;
+}
+
+/**
+ * Makes sure that all inputs have the correct events
+ */
 function updateEvents() {
     let inputs = document.querySelectorAll(".wpp-value, .wpp-key");
     for (const input of inputs) {
@@ -5,6 +35,9 @@ function updateEvents() {
     }
 }
 
+/**
+ * Detects if there are any empty keys and adds a new one if there are none
+ */
 function addNewKeyIfNoEmpty() {
     let keys = document.querySelectorAll(".wpp-key");
     let anyEmpty = false;
@@ -15,10 +48,13 @@ function addNewKeyIfNoEmpty() {
         }
     }
     if (anyEmpty == false) {
-        addNewAttribute();
+        addNewKey();
     }
 }
 
+/**
+ * Detects if there are any empty values and adds a new one if there are none
+ */
 function addNewValuesFieldsIfNoEmpty() {
     let keys = document.querySelectorAll(".wpp-keys > div");
 
@@ -74,29 +110,6 @@ function handleAdditionalInputs() {
     updateEvents();
 }
 
-function addNewAttribute(withFirstValue = true) {
-    let div = document.createElement("div");
-    // let randomHash = generateRandomHash();
-    div.innerHTML = `                <div class="form-floating mb-3">
-    <input type="text" class="form-control wpp-key">
-    <label>Key</label>
-</div>
-<div class="row wpp-values">
-    <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
-        <div class="form-floating mb-3">
-            <input type="text" class="form-control wpp-value">
-            <label>Value</label>
-        </div>
-    </div>
-</div>
-<hr>`;
-    if (!withFirstValue) {
-        div.querySelector(".wpp-values").innerHTML = "";
-    }
-    document.querySelector(".wpp-keys").appendChild(div);
-    return div;
-}
-
 function addNewValue(keyElement) {
     let div = document.createElement("div");
     div.classList.add(..."col-12 col-sm-6 col-lg-4 col-xl-3".split(" "));
@@ -108,9 +121,12 @@ function addNewValue(keyElement) {
     return div;
 }
 
-addNewAttribute();
+addNewKey();
 handleAdditionalInputs();
 
+/**
+ *
+ */
 function generateWpp() {
     let keyDivs = document.querySelectorAll(".wpp-keys > div");
 
@@ -137,7 +153,7 @@ function generateWpp() {
     }
 
     if (data.length == 0) {
-        alert("no data");
+        alert("No data to generate W++ from");
         return;
     }
 
@@ -159,13 +175,15 @@ function parseWpp() {
     input = input.trim();
 
     if (input.length == 0) {
-        console.error("Empty input");
+        console.error("Empty W++ content");
         return;
     }
 
     const oneLineFormat = false;
 
-    // Detect Start
+    /**
+     * Detect borders of the W++ data
+     */
     const start = input.indexOf("{");
     const end = input.lastIndexOf("}");
 
@@ -224,7 +242,7 @@ function parseWpp() {
 
     document.querySelector(".wpp-keys").innerHTML = "";
     for (const pair of data) {
-        let attr = addNewAttribute(false);
+        let attr = addNewKey(false);
         attr.querySelector(".wpp-key").value = pair.key;
         for (const value of pair.values) {
             let val = addNewValue(attr);
